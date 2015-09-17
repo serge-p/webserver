@@ -72,7 +72,7 @@ usage() {
     cat << EOT
  Usage :  ${myname} instance-ID 
 
-  Example instrance ID:	 i-e696e145
+  Example instance-ID:	i-e696e145
 EOT
 } 
 
@@ -81,6 +81,7 @@ if [ "$#" -ne 1 ]; then
     exit 1
 fi
 
+export ID=$1
 
 # Functions lib
 ######################################################################################
@@ -90,7 +91,7 @@ fi
 do_drop_ec2_instance() { 
 
 	echoinfo "Terminating EC2 instance"
-	ec2-terminate-instances $1 || return 1 
+	ec2-terminate-instances ${ID} || return 1 
 	echoinfo "Allow some time for VM to terminate"
 	ec2-describe-instances $1 
 }

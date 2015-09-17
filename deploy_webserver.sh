@@ -73,9 +73,9 @@ usage() {
  Usage :  ${myname} [type]
 
   Installation types:
-    - shell
-    - salt
-    - chief ?? Maybe next time :-)
+    - shell ?? Not really, too easy .. 
+    - salt : The only default option for a new instance config 
+    - chief ?? Ok, Maybe next time :-)
 
 EOT
 } 
@@ -131,11 +131,11 @@ yum -y install wget git
 wget -O install_salt.sh https://bootstrap.saltstack.com || curl -L https://bootstrap.saltstack.com -o install_salt.sh
 sh install_salt.sh
 echo "file_client: local" >/etc/salt/minion.d/masterless.conf
-mkdir -p /srv/salt && git clone https://${GIT_REPO}.git && mv webserver/salt/* /srv/salt  
-salt-call --local state.highstate -l debug
+mkdir -p /srv/salt && git clone https://${GIT_REPO}.git && mv webserver/salt/* /srv/salt/  
+salt-call --local state.highstate -l debug 1>/tmp/highstaterun.log 2>&1
+cd $DOCUMENT_ROOT && nohup node test.js &
 EOF
 chmod +x ./ec2-init.sh
-	
 }
 
 do_start_ec2_instance() { 
@@ -143,22 +143,27 @@ do_start_ec2_instance() {
 	if [ -f ec2-init.sh ] ; then 
 		echoinfo "Starting EC2 instance"
 		ec2-run-instances --key svp --instance-type t2.micro -f ec2-init.sh ami-0d4cfd66 || return 1 
+		rm ./ec2-init.sh
 	else 
-		echowarn "Init file is missing, starting plain instance with key svp" 
+		echowarn "Init file is missing, starting plain instance using key svp" 
 		ec2-run-instances --key svp --instance-type t2.micro ami-0d4cfd66 || return 1 
 		return 1  
 	fi
+	echoinfo "Allow some time for VM to Bootstrap"
+	sleep ${DEFAULT_SLEEP}
+	ec2-describe-instances
 }
 
 
 ######################################################################################
 ######################################################################################
 #
-# Main script logic starts here
+# Main logic starts here
 #
 ######################################################################################
 ######################################################################################
 
+
 detect_color_support
-# do_gen_init_script || echoerror "unable to generate init script"
+do_gen_init_script || echoerror "unable to generate init script"
 do_start_ec2_instance
