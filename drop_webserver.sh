@@ -11,8 +11,8 @@
 ######################################################################################
 
 
-myname="deploy_webserver.sh"
-DEFAULT_SLEEP=3
+myname="drop_webserver.sh"
+DEFAULT_SLEEP=60
 GIT_REPO=github.com/serge-p/webserver
 DOCUMENT_ROOT=/var/www/svp
 WWW_USER=www
@@ -70,15 +70,16 @@ echowarn() {
 
 usage() {
     cat << EOT
- Usage :  ${myname} [type]
+ Usage :  ${myname} instance-ID 
 
-  Installation types:
-    - shell
-    - salt
-    - chief ?? Maybe next time :-)
-
+  Example instrance ID:	 i-e696e145
 EOT
 } 
+
+if [ "$#" -ne 1 ]; then
+    usage
+    exit 1
+fi
 
 
 # Functions lib
@@ -86,70 +87,13 @@ EOT
 ######################################################################################
 
 
+do_drop_ec2_instance() { 
 
-do_java_check() {
-
-	which java || return 1  
-
-	## To be continued, assuming, you've got JDK preinstalled 
-	## and preset all required java vars
-
+	echoinfo "Terminating EC2 instance"
+	ec2-terminate-instances $1 || return 1 
+	echoinfo "Allow some time for VM to terminate"
+	ec2-describe-instances $1 
 }
-
-
-do_install_ec2_cli() {
-
-	mkdir /tmp/svp && cd /tmp/svp || return 1
-	wget http://s3.amazonaws.com/ec2-downloads/ec2-api-tools.zip
-	mkdir /usr/local/ec2 && unzip ec2-api-tools.zip -d /usr/local/ec2 || return 1 
-	do_set_java_env 
-
-	## To be continued, assuming, you've got JDK pre-installed to this box
-	## and preset all required java vars
-
-
-}
-
-do_create_ec2_key_pair() { 
-
-	ec2-run-instances --key svp --instance-type t2.micro  ami-0d4cfd66 || echowarn "Unable to create keypair"
-
-}
-
-do_update_ec2_sec_group() { 
-
-	ec2-run-instances --key svp --instance-type t2.micro  ami-0d4cfd66 || echowarn "Unable to create keypair"
-
-}
-
-do_gen_init_script() { 
-
-echoinfo "Generating init script"
-cat << EOF >ec2-init.sh
-#!/bin/sh
-yum -y install wget git 
-wget -O install_salt.sh https://bootstrap.saltstack.com || curl -L https://bootstrap.saltstack.com -o install_salt.sh
-sh install_salt.sh
-echo "file_client: local" >/etc/salt/minion.d/masterless.conf
-mkdir -p /srv/salt && git clone https://${GIT_REPO}.git && mv webserver/salt/* /srv/salt  
-salt-call --local state.highstate -l debug
-EOF
-chmod +x ./ec2-init.sh
-	
-}
-
-do_start_ec2_instance() { 
-	
-	if [ -f ec2-init.sh ] ; then 
-		echoinfo "Starting EC2 instance"
-		ec2-run-instances --key svp --instance-type t2.micro -f ec2-init.sh ami-0d4cfd66 || return 1 
-	else 
-		echowarn "Init file is missing, starting plain instance with key svp" 
-		ec2-run-instances --key svp --instance-type t2.micro ami-0d4cfd66 || return 1 
-		return 1  
-	fi
-}
-
 
 ######################################################################################
 ######################################################################################
@@ -160,5 +104,4 @@ do_start_ec2_instance() {
 ######################################################################################
 
 detect_color_support
-# do_gen_init_script || echoerror "unable to generate init script"
-do_start_ec2_instance
+do_drop_ec2_instance
