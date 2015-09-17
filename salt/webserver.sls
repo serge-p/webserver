@@ -53,8 +53,8 @@ express:
         engine: node 0.10.x
     - formatter: json
 
-# /var/www/svp:
-#    npm.bootstrap
+/var/www/svp:
+  npm.bootstrap
 
 /var/www/svp/test.js:
   file.managed:

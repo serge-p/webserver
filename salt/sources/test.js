@@ -7,9 +7,8 @@ var server = app.listen(4000, function () {
 
 app.get('/', function (req, res) {
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-  res.send('Hello, this is is a very simple web server, deployed by S-VP Consulting, and by the way, your IP address is '+ip);
+  res.send('<h1> Hello World! <br> this is is a simple web server<br> deployed by Sergey Paramonov<br>And by the way, your IP address is '+ip+'</h1>');
 });
-
 
 console.log('Example app listening at http://%s:%s', host, port);
 

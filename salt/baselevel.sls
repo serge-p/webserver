@@ -7,14 +7,6 @@ wget:
 tmux: 
   pkg.installed
 
-vim: 
+git: 
   pkg.installed
 
-git@github.com/serg-p/webserver/salt:
-  git.latest:
-    - name: git@github.com/serg-p/webserver/salt
-    - target: /srv/salt
-    - rev: master
-    - force_clone: True 
-    - require:
-      - pkg: git
