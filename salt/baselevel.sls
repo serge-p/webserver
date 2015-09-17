@@ -10,7 +10,11 @@ tmux:
 vim: 
   pkg.installed
 
-git.latest:
-  - name: git@github.com/serg-p/webserver/salt
-  - target: /srv/salt
-  - rev: master
+git@github.com/serg-p/webserver/salt:
+  git.latest:
+    - name: git@github.com/serg-p/webserver/salt
+    - target: /srv/salt
+    - rev: master
+    - force_clone: True 
+    - require:
+      - pkg: git
