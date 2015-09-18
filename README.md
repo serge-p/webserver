@@ -1,15 +1,13 @@
 # webserver build example
 
-main logic overview: 
-####################################################################
+# main logic overview: 
 
-
-deploy_webserver.sh
-####################################################################
+* deploy_webserver.sh
  
 script to deploy test.js application in AWS cloud, 
 
-# dependencies: 
+dependencies: 
+~~~
 
 1. please install ec2-cli tools and set environment variables as described in http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/set-up-ec2-cli-linux.html
 
@@ -29,9 +27,7 @@ main logic:
 * example node js app source code is located in ./salt/sources/test.js 
 
 
-
-drop_webserver.sh 
-####################################################################
+* drop_webserver.sh 
 
 script to terminate given EC2 instance, 
 script takes instance ID as an argument
