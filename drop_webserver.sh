@@ -93,7 +93,7 @@ do_drop_ec2_instance() {
 	echoinfo "Terminating EC2 instance"
 	ec2-terminate-instances ${ID} || return 1 
 	echoinfo "Allow some time for VM to terminate"
-	ec2-describe-instances $1 
+	ec2-describe-instances ${ID}
 }
 
 ######################################################################################
