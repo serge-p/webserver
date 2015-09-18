@@ -9,7 +9,6 @@ www:
   user.present:
     - fullname: Webserver Owner
     - shell: /bin/bash
-    - home: {{ DOCUMENT_ROOT }}
     - uid: 4000
     - gid: 4000
     - groups:
@@ -18,9 +17,8 @@ www:
 
 ##### CREATE DOCUMENT ROOT  ###### 
 
-Document_root:
+{{ DOCUMENT_ROOT }}:
   file.directory:
-    - name: {{ DOCUMENT_ROOT }}
     - user: www
     - group: www
     - mode: 755
@@ -43,13 +41,6 @@ npm:
   pkg.installed:
     - enablerepo: epel
 
-express:
-  npm.installed
-
-forever:
-  npm.installed
-
-
 ##### Yet another approach to install Node Dependencies, to be used for some more complicated NodeJS apps  ###### 
 
 
@@ -64,8 +55,16 @@ forever:
         engine: node 0.10.x
     - formatter: json
 
-/var/www/svp:
-  npm.bootstrap
+express:
+  npm.installed:
+    - user: www
+    - dir: {{ DOCUMENT_ROOT }}
+
+forever:
+  npm.installed:
+    - user: www
+    - dir: {{ DOCUMENT_ROOT }}
+
 
 ##### Get latest version of a Main web application and start a webserver   ###### 
 
@@ -80,3 +79,6 @@ forever start test.js:
   cmd.run:
     - cwd: {{ DOCUMENT_ROOT }}
     - user: www
+    - require: 
+      - npm: forever
+      - npm: express

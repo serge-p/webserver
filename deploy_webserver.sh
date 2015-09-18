@@ -133,7 +133,6 @@ sh install_salt.sh
 echo "file_client: local" >/etc/salt/minion.d/masterless.conf
 mkdir -p /srv/salt && git clone https://${GIT_REPO}.git && mv webserver/salt/* /srv/salt/  
 salt-call --local state.highstate -l debug 1>/tmp/highstaterun.log 2>&1
-su - www -c "cd ${DOCUMENT_ROOT} && nohup node test.js &"
 EOF
 chmod +x ./ec2-init.sh
 }
