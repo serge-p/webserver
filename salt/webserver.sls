@@ -61,10 +61,7 @@ express:
     - dir: {{ DOCUMENT_ROOT }}
 
 forever:
-  npm.installed:
-    - user: www
-    - dir: {{ DOCUMENT_ROOT }}
-
+  npm.installed
 
 ##### Get latest version of a Main web application and start a webserver   ###### 
 
