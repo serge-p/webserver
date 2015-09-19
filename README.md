@@ -8,20 +8,19 @@ deploy_webserver.sh
 dependencies: 
 ~~~
 
-1. please install ec2-cli tools and set environment variables as described in AWS doc:
+1. install ec2-cli tools and set environment variables as described in AWS doc:
 http://docs.aws.amazon.com/AWSEC2/latest/CommandLineReference/set-up-ec2-cli-linux.html
 
 2. create authentication key-pair to access AWS console through API and set 2 following environment variables: 
  export AWS_ACCESS_KEY=XXXXXXXXXXXXXXXXXXXX
  export AWS_SECRET_KEY=XXXXXXXXXXXXXXXXXXXX
 
-3. open incoming traffic on port 4000 in VPC security rule 
 ~~~
 
 
 main logic: 
 ~~~
-* script will generate init shell script 
+* generate init shell script 
 * start a new t2.micro instance in EC2 
 * then bootstrap salt into newly created VM 
 * clone this repository and apply highstate in a masterless mode 

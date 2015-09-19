@@ -87,6 +87,11 @@ export ID=$1
 ######################################################################################
 ######################################################################################
 
+do_update_ec2_sec_group() { 
+
+    ec2-revoke default -p -1 || echowarn "Unable to delete rule in default security group" 
+    
+}
 
 do_drop_ec2_instance() { 
 
@@ -105,4 +110,6 @@ do_drop_ec2_instance() {
 ######################################################################################
 
 detect_color_support
+# do_set_java_env
+do_update_ec2_sec_group
 do_drop_ec2_instance

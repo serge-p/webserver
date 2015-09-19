@@ -112,14 +112,18 @@ do_install_ec2_cli() {
 
 do_create_ec2_key_pair() { 
 
-	ec2-run-instances --key svp --instance-type t2.micro  ami-0d4cfd66 || echowarn "Unable to create keypair"
-
+	if [ $(ec2-describe-keypairs svp | wc -l) -gt 0 ] ; then 
+		echoinfo $(ec2-describe-keypairs svp)
+	else
+		ec2-create-keypair svp || echowarn "Unable to create keypair"
+	fi
 }
 
 do_update_ec2_sec_group() { 
 
-	ec2-run-instances --key svp --instance-type t2.micro  ami-0d4cfd66 || echowarn "Unable to create keypair"
-
+	echoinfo "Updating default security group"
+	ec2-revoke default -p -1 1>/dev/null 2>&1
+	ec2-authorize default -p -1 || echowarn "Unable to create new security rule in a default group" 
 }
 
 do_gen_init_script() { 
@@ -164,5 +168,7 @@ do_start_ec2_instance() {
 
 
 detect_color_support
+do_create_ec2_key_pair 
+do_update_ec2_sec_group
 do_gen_init_script || echoerror "unable to generate init script"
 do_start_ec2_instance
